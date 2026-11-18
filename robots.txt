@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kimeunyeol.github.io/yearend-tax-scan/sitemap.xml

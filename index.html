@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>연말정산 놓친 돈 스캔 — 2026년 귀속 환급액 계산기</title>
+<meta name="description" content="2026년 귀속 연말정산. 총급여와 몇 가지만 넣으면 예상 환급액과, 12월 31일 전에 하지 않으면 사라지는 공제·감면을 금액으로 보여줍니다. 중소기업 취업자 감면, 월세, 연금저축, 고향사랑기부 반영.">
+<meta name="theme-color" content="#FBFAF7">
+<meta property="og:title" content="연말정산 놓친 돈 스캔">
+<meta property="og:description" content="12월 31일 전에 안 하면 사라지는 돈을 찾아드립니다. 2026년 귀속 연말정산 계산기.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kimeunyeol.github.io/yearend-tax-scan/">
+<meta property="og:site_name" content="연말정산 스캔">
+<link rel="canonical" href="https://kimeunyeol.github.io/yearend-tax-scan/">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%231D4E43'/><text x='16' y='23' font-size='18' text-anchor='middle' fill='%23FBFAF7' font-family='serif'>%E2%82%A9</text></svg>">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap masthead__inner">
+    <a class="wordmark" href="./">연말정산 <b>스캔</b></a>
+    <div class="masthead__meta">
+      <span class="tag tag--year">2026년 귀속</span>
+      <span class="dday" id="dday" aria-live="polite">D—</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>12월 31일 전에 안 하면,<br>그 돈은 사라집니다.</h1>
+    <p class="lede">
+      총급여와 몇 가지 항목만 넣으면 <b>예상 환급액</b>과, 아직 신청하지 않아
+      <b>그냥 버리고 있는 공제·감면</b>을 금액으로 계산해 보여드립니다.
+      중소기업 취업자 감면, 월세, 연금저축, 고향사랑기부까지 반영했습니다.
+    </p>
+    <p class="micro">입력한 내용은 이 브라우저 밖으로 나가지 않습니다. 서버로 보내지 않습니다.</p>
+  </section>
+
+  <aside class="ad ad--top" aria-label="광고">
+    <!-- 애드센스/카카오애드핏 코드를 이 안에 넣으세요. 광고가 없을 때는 안내 문구가 보입니다. -->
+    <span class="ad__label">AD</span>
+    <span class="ad__placeholder">광고 영역 (728×90 / 모바일 320×100)</span>
+  </aside>
+
+  <form id="calc" class="form" autocomplete="off" novalidate>
+
+    <section class="block">
+      <h2 class="block__title"><span class="num">01</span> 소득</h2>
+
+      <div class="field">
+        <label for="gross">연간 총급여 <span class="hint">비과세 제외, 세전 연봉</span></label>
+        <div class="input-money">
+          <input id="gross" name="gross" type="text" inputmode="numeric" value="50,000,000" data-money>
+          <span class="unit">원</span>
+        </div>
+        <div class="chips" role="group" aria-label="연봉 빠른 선택">
+          <button type="button" class="chip" data-set="gross" data-value="36000000">3,600만</button>
+          <button type="button" class="chip" data-set="gross" data-value="45000000">4,500만</button>
+          <button type="button" class="chip" data-set="gross" data-value="50000000">5,000만</button>
+          <button type="button" class="chip" data-set="gross" data-value="60000000">6,000만</button>
+          <button type="button" class="chip" data-set="gross" data-value="70000000">7,000만</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="withheld">회사에서 뗀 소득세 <span class="hint">선택 · 급여명세서 '소득세' 합계</span></label>
+        <div class="input-money">
+          <input id="withheld" name="withheld" type="text" inputmode="numeric" placeholder="비우면 자동 추정" data-money>
+          <span class="unit">원</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title"><span class="num">02</span> 가족</h2>
+
+      <label class="check">
+        <input type="checkbox" id="spouse" name="spouse">
+        <span>배우자 공제 <em>소득 100만원 이하</em></span>
+      </label>
+
+      <div class="grid grid--2">
+        <div class="field">
+          <label for="children">자녀 수 <span class="hint">20세 이하</span></label>
+          <input id="children" name="children" type="number" min="0" max="10" value="0" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="childUnder8">그중 8세 미만 <span class="hint">자녀세액공제 제외</span></label>
+          <input id="childUnder8" name="childUnder8" type="number" min="0" max="10" value="0" inputmode="numeric">
+        </div>
+      </div>
+
+      <details class="more">
+        <summary>부양가족 추가 (부모님·장애인)</summary>
+        <div class="grid grid--3">
+          <div class="field">
+            <label for="seniors60">60세 이상</label>
+            <input id="seniors60" name="seniors60" type="number" min="0" max="10" value="0" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="seniors70">그중 70세 이상</label>
+            <input id="seniors70" name="seniors70" type="number" min="0" max="10" value="0" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="disabled">장애인</label>
+            <input id="disabled" name="disabled" type="number" min="0" max="10" value="0" inputmode="numeric">
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title"><span class="num">03</span> 사는 곳</h2>
+
+      <div class="field">
+        <label for="rentAnnual">1년 월세 <span class="hint">월 50만원이면 6,000,000</span></label>
+        <div class="input-money">
+          <input id="rentAnnual" name="rentAnnual" type="text" inputmode="numeric" value="0" data-money>
+          <span class="unit">원</span>
+        </div>
+      </div>
+
+      <div class="grid grid--2">
+        <div class="field">
+          <label for="jeonseLoan">전세대출 원리금 <span class="hint">1년 상환액</span></label>
+          <div class="input-money">
+            <input id="jeonseLoan" name="jeonseLoan" type="text" inputmode="numeric" value="0" data-money>
+            <span class="unit">원</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="housingSavings">청약저축 납입 <span class="hint">1년</span></label>
+          <div class="input-money">
+            <input id="housingSavings" name="housingSavings" type="text" inputmode="numeric" value="0" data-money>
+            <span class="unit">원</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title"><span class="num">04</span> 쓴 돈</h2>
+      <p class="block__note">1년 합계. 홈택스 연말정산 간소화 서비스에서 그대로 확인할 수 있습니다.</p>
+
+      <div class="grid grid--3">
+        <div class="field">
+          <label for="credit">신용카드</label>
+          <div class="input-money">
+            <input id="credit" name="credit" type="text" inputmode="numeric" value="0" data-money>
+            <span class="unit">원</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="debit">체크·현금 <span class="hint">현금영수증</span></label>
+          <div class="input-money">
+            <input id="debit" name="debit" type="text" inputmode="numeric" value="0" data-money>
+            <span class="unit">원</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="transit">대중교통</label>
+          <div class="input-money">
+            <input id="transit" name="transit" type="text" inputmode="numeric" value="0" data-money>
+            <span class="unit">원</span>
+          </div>
+        </div>
+      </div>
+
+      <details class="more">
+        <summary>전통시장 · 도서·공연 · 의료비 · 교육비 · 보험료</summary>
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="market">전통시장</label>
+            <div class="input-money">
+              <input id="market" name="market" type="text" inputmode="numeric" value="0" data-money>
+              <span class="unit">원</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="culture">도서·공연·수영장</label>
+            <div class="input-money">
+              <input id="culture" name="culture" type="text" inputmode="numeric" value="0" data-money>
+              <span class="unit">원</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="medical">의료비 <span class="hint">총급여 3% 초과분부터</span></label>
+            <div class="input-money">
+              <input id="medical" name="medical" type="text" inputmode="numeric" value="0" data-money>
+              <span class="unit">원</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="education">교육비</label>
+            <div class="input-money">
+              <input id="education" name="education" type="text" inputmode="numeric" value="0" data-money>
+              <span class="unit">원</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="insurancePremium">보장성보험료</label>
+            <div class="input-money">
+              <input id="insurancePremium" name="insurancePremium" type="text" inputmode="numeric" value="0" data-money>
+              <span class="unit">원</span>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title"><span class="num">05</span> 넣은 돈</h2>
+
+      <div class="field">
+        <label for="pensionAccount">연금저축 + IRP <span class="hint">1년 납입액 · 한도 900만</span></label>
+        <div class="input-money">
+          <input id="pensionAccount" name="pensionAccount" type="text" inputmode="numeric" value="0" data-money>
+          <span class="unit">원</span>
+        </div>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" id="married2026" name="married2026">
+        <span>2026년에 혼인신고 <em>결혼세액공제 50만 · 올해가 마지막</em></span>
+      </label>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title"><span class="num">06</span> 기부와 감면</h2>
+
+      <div class="grid grid--2">
+        <div class="field">
+          <label for="hometownDonation">고향사랑기부금</label>
+          <div class="input-money">
+            <input id="hometownDonation" name="hometownDonation" type="text" inputmode="numeric" value="0" data-money>
+            <span class="unit">원</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="generalDonation">일반 기부금</label>
+          <div class="input-money">
+            <input id="generalDonation" name="generalDonation" type="text" inputmode="numeric" value="0" data-money>
+            <span class="unit">원</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="smeType">중소기업 취업자 소득세 감면 <span class="hint">신청했거나 신청할 수 있는 경우</span></label>
+        <select id="smeType" name="smeType">
+          <option value="none">해당 없음 / 이미 기간 종료</option>
+          <option value="youth">청년 (15~34세) · 90% · 5년</option>
+          <option value="senior">60세 이상 · 70% · 3년</option>
+          <option value="disabled">장애인 · 70% · 3년</option>
+          <option value="career">경력단절 근로자 · 70% · 3년</option>
+        </select>
+      </div>
+
+      <details class="more">
+        <summary>4대보험료 직접 입력 (비우면 자동 추정)</summary>
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="pensionInsurance">국민연금 (본인부담)</label>
+            <div class="input-money">
+              <input id="pensionInsurance" name="pensionInsurance" type="text" inputmode="numeric" placeholder="총급여 × 4.5%" data-money>
+              <span class="unit">원</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="healthInsurance">건강·요양·고용보험</label>
+            <div class="input-money">
+              <input id="healthInsurance" name="healthInsurance" type="text" inputmode="numeric" placeholder="총급여 × 4.9041%" data-money>
+              <span class="unit">원</span>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <div class="form__actions">
+      <button type="button" id="reset" class="btn btn--ghost">처음부터</button>
+      <button type="button" id="print" class="btn btn--line">결과 인쇄 / PDF</button>
+    </div>
+  </form>
+
+  <section id="result" class="result" aria-live="polite">
+    <div class="print-summary" id="printSummary" aria-hidden="true"></div>
+    <div class="result__head">
+      <h2>내 연말정산</h2>
+      <span class="result__basis">2026년 귀속 · 2027년 1~2월 정산</span>
+    </div>
+
+    <div class="refund" id="refundCard">
+      <p class="refund__label" id="refundLabel">예상 환급액</p>
+      <p class="refund__value" id="refundValue">—</p>
+      <p class="refund__sub" id="refundSub"></p>
+    </div>
+
+    <dl class="stats">
+      <div><dt>결정세액</dt><dd id="statTax">—</dd></div>
+      <div><dt>지방소득세 포함</dt><dd id="statTotal">—</dd></div>
+      <div><dt>실효세율</dt><dd id="statRate">—</dd></div>
+      <div><dt>월 평균 실수령</dt><dd id="statNet">—</dd></div>
+    </dl>
+
+    <div class="missed">
+      <div class="missed__head">
+        <h3>놓치고 있는 돈 <span class="missed__sum" id="missedSum">0원</span></h3>
+        <p id="missedNote">아직 신청하지 않았거나, 12월 31일을 넘기면 사라지는 항목만 골랐습니다.</p>
+      </div>
+      <ol class="missed__list" id="missedList"></ol>
+      <p class="missed__empty" id="missedEmpty" hidden>지금 입력한 조건에서는 더 챙길 항목이 없습니다.</p>
+    </div>
+
+    <details class="breakdown">
+      <summary>계산 내역 자세히 보기</summary>
+      <table class="table">
+        <caption>소득공제</caption>
+        <tbody id="tbodyDeduction"></tbody>
+      </table>
+      <table class="table">
+        <caption>세액공제 · 감면</caption>
+        <tbody id="tbodyCredit"></tbody>
+      </table>
+      <table class="table table--total">
+        <caption>세액 계산</caption>
+        <tbody id="tbodyTax"></tbody>
+      </table>
+      <p class="table__note" id="standardNote"></p>
+    </details>
+  </section>
+
+  <section class="hometown" id="hometown">
+    <h2>고향사랑기부, 이득일까?</h2>
+    <p class="hometown__lede">10만원까지는 전액, 10~20만원은 40%(지방세 포함 44%), 그 초과분은 15%. 여기에 기부액의 30%가 답례품으로 돌아옵니다.</p>
+    <div class="hometown__calc">
+      <div class="field">
+        <label for="hometownInput">기부 금액</label>
+        <div class="input-money">
+          <input id="hometownInput" type="text" inputmode="numeric" value="200,000" data-money>
+          <span class="unit">원</span>
+        </div>
+      </div>
+      <div class="chips" role="group" aria-label="기부 금액 빠른 선택">
+        <button type="button" class="chip" data-set="hometownInput" data-value="100000">10만</button>
+        <button type="button" class="chip" data-set="hometownInput" data-value="200000">20만</button>
+        <button type="button" class="chip" data-set="hometownInput" data-value="500000">50만</button>
+        <button type="button" class="chip" data-set="hometownInput" data-value="1000000">100만</button>
+      </div>
+    </div>
+    <table class="table">
+      <tbody id="tbodyHometown"></tbody>
+    </table>
+    <p class="table__note" style="padding:0">
+      지방소득세는 결정세액의 10%라 세액공제가 늘면 함께 줄어듭니다. 정부 안내는 20만원 기준 20.4만원으로 표기하는데,
+      10만원 구간의 지방세 감소분은 빼고 계산한 값입니다. 위 표는 그 감소분까지 포함했습니다.
+    </p>
+  </section>
+
+
+  <section class="faq" id="faq">
+    <h2>자주 묻는 것</h2>
+
+    <details class="faq__item">
+      <summary>환급액은 언제 들어오나요?</summary>
+      <p>2026년 귀속 연말정산은 2027년 1월 15일쯤 홈택스 간소화 서비스가 열리고, 회사가 1~2월 급여일에 정산합니다. 회사마다 제출 마감이 1월 중순으로 다르니 인사팀 공지를 먼저 확인하세요.</p>
+    </details>
+
+    <details class="faq__item">
+      <summary>12월에 아직 할 수 있는 절세가 있나요?</summary>
+      <p>연금저축·IRP 납입(12/31 입금분까지), 고향사랑기부(12/31), 보장성보험 연말 납입, 기부금이 대표적입니다. 셋 다 그 해에 실제로 돈이 나간 것만 인정되므로 12월 31일이 실질적인 마감입니다.</p>
+    </details>
+
+    <details class="faq__item">
+      <summary>중소기업 취업자 감면은 어떻게 신청하나요?</summary>
+      <p>근로자가 「중소기업 취업자 소득세 감면신청서」를 회사에 내고, 회사가 감면명세서를 세무서에 제출합니다. 취업일 다음 달 말일이 원칙이지만 놓쳤어도 소급 신청이 가능합니다. 청년은 5년 90%, 60세 이상·장애인·경력단절 근로자는 3년 70%, 연 200만원 한도입니다.</p>
+    </details>
+
+    <details class="faq__item">
+      <summary>월세 세액공제는 어떤 조건이 필요한가요?</summary>
+      <p>총급여 8,000만원 이하(종합소득금액 7,000만원 초과자 제외) 무주택 세대의 세대주 또는 세대원이어야 하고, 임대차계약서 주소와 주민등록 주소가 같아야 합니다. 국민주택규모(85㎡) 이하 또는 기준시가 4억원 이하 주택이 대상이며, 연 1,000만원까지 15~17%를 돌려받습니다.</p>
+    </details>
+
+    <details class="faq__item">
+      <summary>신용카드와 체크카드, 어느 쪽이 유리한가요?</summary>
+      <p>총급여의 25%까지는 어차피 공제 대상이 아니므로 신용카드 혜택을 쓰고, 그 초과분은 공제율이 두 배인 체크카드·현금영수증으로 쓰는 편이 유리합니다. 2026년 귀속부터는 18세 미만 자녀가 있으면 카드 공제 기본한도가 1명당 50만원(최대 100만원) 늘어납니다.</p>
+    </details>
+
+    <details class="faq__item">
+      <summary>계산 결과가 실제 환급액과 다른 이유는?</summary>
+      <p>회사에서 뗀 소득세를 입력하지 않으면 간이세액표 방식으로 추정하기 때문에 차이가 납니다. 급여명세서의 소득세 합계를 넣으면 더 정확해집니다. 부양가족 소득·나이 요건, 주택 요건처럼 서류로 확인해야 하는 부분도 있습니다.</p>
+    </details>
+  </section>
+
+  <aside class="ad ad--bottom" aria-label="광고">
+    <span class="ad__label">AD</span>
+    <span class="ad__placeholder">광고 영역 (반응형)</span>
+  </aside>
+
+  <section class="offer">
+    <p class="offer__eyebrow">이 계산기를 엑셀로</p>
+    <h2>매년 반복되는 연말정산, 파일 하나로 끝내기</h2>
+    <p>공제 항목 정리표, 환급 시뮬레이터, 서류 체크리스트, 중소기업 감면신청서 양식을 한 파일에 담았습니다.
+      내년에도 그대로 쓰고, 부모님이나 배우자 몫까지 같이 정리할 수 있습니다.</p>
+    <a class="btn btn--solid" href="#" id="offerLink" aria-disabled="true">판매 페이지 준비 중</a>
+    <p class="offer__note">크몽에서 판매 예정 · 출시하면 이 자리에서 바로 연결됩니다.</p>
+  </section>
+
+  <footer class="foot">
+    <h2>계산 기준</h2>
+    <ul class="foot__list">
+      <li>소득세법(2026.1.1 시행) · 조세특례제한법 · 2025년 12월 개정세법 반영. 2026년 귀속(2027년 1~2월 회사 정산) 기준입니다.</li>
+      <li>근로소득공제·기본세율·신용카드 한도(2026년 자녀 가산)만 2026년 기준이고, 2027년부터 시행 예정인 개정안은 넣지 않았습니다.</li>
+      <li>표준세액공제(13만원)와 항목별 공제 중 <b>세금이 적게 나오는 쪽</b>을 자동 적용합니다.</li>
+      <li>회사에서 뗀 소득세를 입력하지 않으면 간이세액표 방식으로 추정합니다. 실제 환급액은 급여명세서의 원천징수액에 따라 달라집니다.</li>
+      <li>4대보험료를 비우면 2025년 요율(국민연금 4.5%, 건강 3.545%, 요양 0.4591%, 고용 0.9%)로 추정합니다.</li>
+      <li>부양가족 소득·나이 요건, 주택 요건(무주택·85㎡ 이하 또는 기준시가 4억 이하)은 직접 확인해야 합니다.</li>
+    </ul>
+    <p class="foot__disclaimer">이 계산기는 참고용입니다. 법적 효력이 없고, 실제 세액은 회사 원천징수와 홈택스 간소화 자료에 따라 달라집니다. 세무 상담을 대체하지 않습니다.</p>
+    <p class="foot__copy">© 2026 연말정산 스캔 · <a href="privacy.html">개인정보처리방침</a> · <a href="#faq">자주 묻는 것</a></p>
+  </footer>
+
+</main>
+
+<div class="sticky" id="sticky" hidden>
+  <div class="sticky__inner">
+    <div>
+      <span class="sticky__label">예상 환급</span>
+      <strong id="stickyValue">—</strong>
+    </div>
+    <a class="btn btn--solid btn--sm" href="#result">내역 보기</a>
+  </div>
+</div>
+
+<script src="assets/engine.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
